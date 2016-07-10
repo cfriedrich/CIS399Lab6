@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import java.util.ArrayList;
 import java.util.Dictionary;
+import java.util.HashMap;
 
 /**
  * Created by Christopher on 7/9/2016.
@@ -85,21 +86,28 @@ public class TideTrackerDB {
 
         public void populateDatabase(SQLiteDatabase db, String[] locations, ArrayList<DataItem> predictions)
         {
+            HashMap<String, Integer> locs = new HashMap<String, Integer>();
+
+            locs.put("ast", 1);
+            locs.put("flo", 2);
+            locs.put("gol", 3);
+            locs.put("sou", 4);
+
+            onUpgrade(db, 1, 1);
             Dictionary<String, String> locDict = null;
 
             for(int i = 0; i < (locations.length); i++)
             {
-                db.execSQL("INSERT INTO " + LOCATION_TABLE + " VALUES (" + i+1 + ", '" + locations[i].toString() + "')");
-                locDict.put(locations[i].toString(), String.valueOf(i+1));
+                db.execSQL("INSERT INTO " + LOCATION_TABLE + " VALUES (" + i+1 + ", '" + locations[i] + "')");
             }
 
             for(int i = 0; i < predictions.size(); i++)
             {
                 DataItem item = predictions.get(i);
-                int locID = Integer.getInteger(locDict.get(item.getLocation()));
+                int locID = locs.get(item.getLocation());
                 db.execSQL("INSERT INTO " + PREDICTION_TABLE + " VALUES (" + i+1 + ", '" +
-                    locID + ", " + item.getFormattedDate() + ", " + item.getTimeString() + ", " +
-                    item.getHighlow() + ", " + item.getFeet() + ", " + item.getCentimeters() + ");");
+                    String.valueOf(locID) + "', '" + item.getFormattedDate() + "', '" + item.getTimeString() + "', '" +
+                    item.getHighlow() + "', '" + item.getFeet() + "', '" + item.getCentimeters() + "');");
             }
 
         }
@@ -119,6 +127,12 @@ public class TideTrackerDB {
     // constructor
     public TideTrackerDB(Context context) {
         dbHelper = new DBHelper(context, DB_NAME, null, DB_VERSION);
+    }
+
+    public void fillData(TideTrackerDB database, String[] locations, ArrayList<DataItem> predictions)
+    {
+        openWriteableDB();
+        dbHelper.populateDatabase(db, locations, predictions);
     }
 
     // private methods
@@ -165,13 +179,14 @@ public class TideTrackerDB {
         String[] whereArgs = new String[]{
             location
         };
-        String queryString = "SELECT " + LOCATION_ID + " " +
-                "FROM " + LOCATION_TABLE + " " +
-                "WHERE " + LOCATION_NAME + " = ?;";
+//        String queryString = "SELECT " + LOCATION_ID +
+//                " FROM " + LOCATION_TABLE +
+//                " WHERE " + LOCATION_NAME + " = ?;";
+        String queryString = "SELECT * FROM locations WHERE name != ?;";
         Cursor cursor = db.rawQuery(queryString, whereArgs);
         if(cursor.getCount() > 0) {
             cursor.moveToFirst();
-            locationID = cursor.getInt(cursor.getColumnIndex(String.valueOf(LOCATION_ID_COL)));
+            locationID = cursor.getInt(LOCATION_ID_COL);
         }
         closeCursor(cursor);
         closeDB();

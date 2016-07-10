@@ -34,6 +34,7 @@ public class ViewTidesActivity extends AppCompatActivity {
 
 
         db = new TideTrackerDB(this);
+
         locationID = db.getLocationID(locationShort);
 
         tidesListView = (ListView) findViewById(R.id.tidesListView);

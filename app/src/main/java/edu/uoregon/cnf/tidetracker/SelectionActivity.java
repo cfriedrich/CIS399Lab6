@@ -29,6 +29,14 @@ public class SelectionActivity extends AppCompatActivity implements View.OnClick
             FILE3NAME,
             FILE4NAME
     };
+
+    private String[] locations = {
+            FILE1NAME.substring(0, 3),
+            FILE2NAME.substring(0, 3),
+            FILE3NAME.substring(0, 3),
+            FILE4NAME.substring(0, 3)
+    };
+
     private Spinner locationSpinner;
     private Button tideInfoButton;
     private DatePicker readingDatePicker;
@@ -61,7 +69,7 @@ public class SelectionActivity extends AppCompatActivity implements View.OnClick
         dataCollection = fileIO.readAllFiles(files);
         // get db and StringBuilder objects
         TideTrackerDB db = new TideTrackerDB(this);
-
+        db.fillData(db, locations, dataCollection);
 
 //        new ReadFeed().execute();
 

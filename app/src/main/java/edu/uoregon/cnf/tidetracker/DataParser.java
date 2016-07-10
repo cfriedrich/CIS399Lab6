@@ -8,12 +8,15 @@ public class DataParser extends DefaultHandler {
     private ParsedData dataCollection;
     private DataItem dataItem;
 
+    private boolean isLocation = false;
     private boolean isDate = false;
     private boolean isDay = false;
     private boolean isTime = false;
     private boolean isFeet = false;
     private boolean isCentimeters = false;
     private boolean isHighLow = false;
+
+    static String location;
 
     public ParsedData getFeed() {
         return dataCollection;
@@ -31,6 +34,10 @@ public class DataParser extends DefaultHandler {
 
         if (qName.equals("item")) {
             dataItem = new DataItem();
+            return;
+        }
+        if (qName.equals("stationname")) {
+            isLocation = true;
             return;
         }
         else if (qName.equals("date")) {
@@ -64,7 +71,11 @@ public class DataParser extends DefaultHandler {
                            String qName) throws SAXException
     {
         if (qName.equals("item")) {
+            dataItem.setLocation(location);
             dataCollection.addItem(dataItem);
+            return;
+        }
+        if (qName.equals("stationname")) {
             return;
         }
     }
@@ -75,6 +86,10 @@ public class DataParser extends DefaultHandler {
         if (isDate) {
             dataItem.setDateString(s);
             isDate = false;
+        }
+        if (isLocation){
+            location = s.trim().toLowerCase().substring(0, 3);
+            isLocation = false;
         }
         if (isDay) {
             String dayName = null;
