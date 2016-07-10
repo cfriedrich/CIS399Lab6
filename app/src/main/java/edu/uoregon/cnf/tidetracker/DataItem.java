@@ -8,6 +8,7 @@ public class DataItem {
 
     private SimpleDateFormat dateInFormat = new SimpleDateFormat("yyyy/MM/dd hh:mm:ss aa");
     private SimpleDateFormat dateOutFormat = new SimpleDateFormat("yyyy/MM/dd EEEE");
+    private SimpleDateFormat shortDateOutFormat = new SimpleDateFormat("yyyy/MM/dd");
     private String location = null;
     private String dateString = null;
     private String day = null;
@@ -81,5 +82,16 @@ public class DataItem {
         catch (Exception e) {
         }
         return this.dateString + " " + this.day;
+    }
+
+    public String getShortDate() {
+        try {
+            Date date = dateInFormat.parse(this.dateString.trim());
+            String formattedDate = shortDateOutFormat.format(date);
+            return formattedDate;
+        }
+        catch (Exception e) {
+            return this.dateString;
+        }
     }
 }

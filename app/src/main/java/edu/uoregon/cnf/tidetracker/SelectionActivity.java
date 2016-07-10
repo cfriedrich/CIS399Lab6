@@ -11,6 +11,8 @@ import android.widget.DatePicker;
 import android.widget.Spinner;
 import android.os.AsyncTask;
 import android.widget.Toast;
+
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 import java.util.Calendar;
@@ -18,6 +20,7 @@ import java.util.Date;
 
 public class SelectionActivity extends AppCompatActivity implements View.OnClickListener {
 
+    private SimpleDateFormat shortDateOutFormat = new SimpleDateFormat("yyyy/MM/dd");
     private final String FILE1NAME = "astoria_annual.xml";
     private final String FILE2NAME = "florence_annual.xml";
     private final String FILE3NAME = "goldbeach_annual.xml";
@@ -48,6 +51,8 @@ public class SelectionActivity extends AppCompatActivity implements View.OnClick
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_selection);
 
+        Intent intent = getIntent();
+
         fileIO = new FileIO(getApplicationContext());
 
         locationSpinner = (Spinner) findViewById(R.id.locationSpinner);
@@ -66,11 +71,14 @@ public class SelectionActivity extends AppCompatActivity implements View.OnClick
 
         readingDatePicker = (DatePicker) findViewById(R.id.readingDatePicker);
 
-        dataCollection = fileIO.readAllFiles(files);
-        // get db and StringBuilder objects
-        TideTrackerDB db = new TideTrackerDB(this);
-        db.fillData(db, locations, dataCollection);
+        Boolean returningFlag = Boolean.parseBoolean(intent.getStringExtra("returning"));
 
+        if(returningFlag == true) {
+            dataCollection = fileIO.readAllFiles(files);
+            // get db and StringBuilder objects
+            TideTrackerDB db = new TideTrackerDB(this);
+            db.fillData(db, locations, dataCollection);
+        }
 //        new ReadFeed().execute();
 
     }
@@ -113,10 +121,12 @@ public class SelectionActivity extends AppCompatActivity implements View.OnClick
 
                     Date selectedDate =  calendar.getTime();
 
+                    String formattedDate = shortDateOutFormat.format(selectedDate);
+
                     Intent intent = new Intent(this, ViewTidesActivity.class);
 
                     intent.putExtra("location", location);
-                    intent.putExtra("date", selectedDate.toString());
+                    intent.putExtra("date", formattedDate);
 
                     this.startActivity(intent);
 

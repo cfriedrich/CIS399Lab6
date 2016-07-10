@@ -13,17 +13,69 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Large Text"
         android:id="@+id/dateTextView"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
+    <LinearLayout
+        android:orientation="horizontal"
+        android:id="@+id/headerLayout"
+        android:layout_below="@+id/dateTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:layout_weight="0.12">
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/colorAccent"
+            android:textColor="@color/apptheme_color"
+            android:textSize="22sp"
+            android:layout_weight="1"
+            android:textStyle="bold"
+            android:text="Time"
+            android:id="@+id/timeTextView" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/colorAccent"
+            android:textColor="@color/apptheme_color"
+            android:textSize="22sp"
+            android:layout_weight="1"
+            android:textStyle="bold"
+            android:text="High/Low"
+            android:id="@+id/highLowTextView" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/colorAccent"
+            android:textColor="@color/apptheme_color"
+            android:textSize="22sp"
+            android:layout_weight="1"
+            android:textStyle="bold"
+            android:text="Feet"
+            android:id="@+id/feetTextView" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/colorAccent"
+            android:textColor="@color/apptheme_color"
+            android:textSize="22sp"
+            android:layout_weight="1"
+            android:textStyle="bold"
+            android:text="CM"
+            android:id="@+id/centimetersTextView" />
+
+    </LinearLayout>
     <ListView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/tidesListView"
-        android:layout_below="@+id/dateTextView"
+        android:layout_below="@+id/headerLayout"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />
 </RelativeLayout>

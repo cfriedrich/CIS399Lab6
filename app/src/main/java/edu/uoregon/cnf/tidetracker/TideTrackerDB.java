@@ -98,15 +98,15 @@ public class TideTrackerDB {
 
             for(int i = 0; i < (locations.length); i++)
             {
-                db.execSQL("INSERT INTO " + LOCATION_TABLE + " VALUES (" + i+1 + ", '" + locations[i] + "')");
+                db.execSQL("INSERT INTO " + LOCATION_TABLE + " VALUES (NULL, '" + locations[i] + "')");
             }
 
             for(int i = 0; i < predictions.size(); i++)
             {
                 DataItem item = predictions.get(i);
                 int locID = locs.get(item.getLocation());
-                db.execSQL("INSERT INTO " + PREDICTION_TABLE + " VALUES (" + i+1 + ", '" +
-                    String.valueOf(locID) + "', '" + item.getFormattedDate() + "', '" + item.getTimeString() + "', '" +
+                db.execSQL("INSERT INTO " + PREDICTION_TABLE + " VALUES (NULL, '" +
+                    String.valueOf(locID) + "', '" + item.getShortDate() + "', '" + item.getTimeString() + "', '" +
                     item.getHighlow() + "', '" + item.getFeet() + "', '" + item.getCentimeters() + "');");
             }
 
@@ -204,7 +204,7 @@ public class TideTrackerDB {
         String queryString = "SELECT * " +
                 "FROM " + PREDICTION_TABLE + " " +
                 "WHERE " + PREDICTION_LOCATION_ID + " = ? AND " +
-                PREDICTION_DATE + " = ?;";
+                PREDICTION_DATE + " = ? ;";
         Cursor cursor = db.rawQuery(queryString, whereArgs);
         while (cursor.moveToNext()) {
             Prediction prediction = new Prediction();
