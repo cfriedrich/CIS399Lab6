@@ -1,6 +1,5 @@
 package edu.uoregon.cnf.tidetracker;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -10,9 +9,6 @@ import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.HashMap;
 
-/**
- * Created by Christopher on 7/9/2016.
- */
 public class TideTrackerDB {
     // Database Constants
     public static final String DB_NAME = "tidetracker.db";
@@ -48,7 +44,6 @@ public class TideTrackerDB {
 
     public static final String PREDICTION_CM = "centimeters";
     public static final int PREDICTION_CM_COL = 6;
-
 
     public static final String CREATE_LOCATION_TABLE =
             "CREATE TABLE " + LOCATION_TABLE + " (" +
@@ -88,11 +83,13 @@ public class TideTrackerDB {
         {
             HashMap<String, Integer> locs = new HashMap<String, Integer>();
 
+            // I wanted to do this cleaner... :P  Ran out of time
             locs.put("ast", 1);
             locs.put("flo", 2);
             locs.put("gol", 3);
             locs.put("sou", 4);
 
+            // Rebuild the entire database
             onUpgrade(db, 1, 1);
             Dictionary<String, String> locDict = null;
 
@@ -113,18 +110,17 @@ public class TideTrackerDB {
         }
         @Override
             public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
             db.execSQL(TideTrackerDB.DROP_LOCATION_TABLE);
             db.execSQL(TideTrackerDB.DROP_PREDICTION_TABLE);
             onCreate(db);
         }
     }
 
-    // database and database helper objects
+    // Database and Database helper objects
     private SQLiteDatabase db;
     private DBHelper dbHelper;
 
-    // constructor
+    // Constructor
     public TideTrackerDB(Context context) {
         dbHelper = new DBHelper(context, DB_NAME, null, DB_VERSION);
     }
@@ -135,7 +131,6 @@ public class TideTrackerDB {
         dbHelper.populateDatabase(db, locations, predictions);
     }
 
-    // private methods
     private void openReadableDB() {
         db = dbHelper.getReadableDatabase();
     }
@@ -154,7 +149,6 @@ public class TideTrackerDB {
             cursor.close();
     }
 
-    // public methods
     public ArrayList<Location> getLocations() {
         ArrayList<Location> locations = new ArrayList<Location>();
         openReadableDB();
@@ -173,15 +167,15 @@ public class TideTrackerDB {
         return locations;
     }
 
+    // Grab the location ID based on an abbreviated location
     public int getLocationID(String location) {
+
         int locationID = 0;
         openReadableDB();
         String[] whereArgs = new String[]{
             location
         };
-//        String queryString = "SELECT " + LOCATION_ID +
-//                " FROM " + LOCATION_TABLE +
-//                " WHERE " + LOCATION_NAME + " = ?;";
+
         String queryString = "SELECT * FROM locations WHERE name != ?;";
         Cursor cursor = db.rawQuery(queryString, whereArgs);
         if(cursor.getCount() > 0) {
@@ -194,17 +188,33 @@ public class TideTrackerDB {
         return locationID;
     }
 
-    public ArrayList<Prediction> getPredictions(String locationID, String date) {
+    // Get all the prediction objects
+    public ArrayList<Prediction> getPredictions(String locationID, String date, String date2) {
         ArrayList<Prediction> predictions = new ArrayList<Prediction>();
         openReadableDB();
-        String[] whereArgs = new String[]{
-                locationID,
-                date
-        };
-        String queryString = "SELECT * " +
-                "FROM " + PREDICTION_TABLE + " " +
-                "WHERE " + PREDICTION_LOCATION_ID + " = ? AND " +
-                PREDICTION_DATE + " = ? ;";
+
+        String queryString = "";
+        String[] whereArgs = new String[3];
+        if(date != date2) {
+            whereArgs[0] = locationID;
+            whereArgs[1] = date;
+            whereArgs[2] = date2;
+
+            queryString = "SELECT * " +
+                    "FROM " + PREDICTION_TABLE + " " +
+                    "WHERE " + PREDICTION_LOCATION_ID + " = ? AND " +
+                    PREDICTION_DATE + " IN ( ? , ? );";
+        }
+        else
+        {
+            whereArgs[0] = locationID;
+            whereArgs[1] = date;
+
+            queryString = "SELECT * " +
+                    "FROM " + PREDICTION_TABLE + " " +
+                    "WHERE " + PREDICTION_LOCATION_ID + " = ? AND " +
+                    PREDICTION_DATE + " = ?;";
+        }
         Cursor cursor = db.rawQuery(queryString, whereArgs);
         while (cursor.moveToNext()) {
             Prediction prediction = new Prediction();
@@ -223,107 +233,4 @@ public class TideTrackerDB {
 
         return predictions;
     }
-
-
-
-//    public ArrayList<Task> getTasks(String listName) {
-//        String where =
-//                TASK_LIST_ID + "= ? AND " +
-//                        TASK_HIDDEN + "!=1";
-//        int listID = getList(listName).getId();
-//        String[] whereArgs = { Integer.toString(listID) };
-//
-//        this.openReadableDB();
-//        Cursor cursor = db.query(TASK_TABLE, null,
-//                where, whereArgs,
-//                null, null, null);
-//        ArrayList<Task> tasks = new ArrayList<Task>();
-//        while (cursor.moveToNext()) {
-//            tasks.add(getTaskFromCursor(cursor));
-//        }
-//        this.closeCursor(cursor);
-//        this.closeDB();
-//
-//        return tasks;
-//    }
-//
-//    public Task getTask(int id) {
-//        String where = TASK_ID + "= ?";
-//        String[] whereArgs = { Integer.toString(id) };
-//
-//        this.openReadableDB();
-//        Cursor cursor = db.query(TASK_TABLE,
-//                null, where, whereArgs, null, null, null);
-//        cursor.moveToFirst();
-//        Task task = getTaskFromCursor(cursor);
-//        this.closeCursor(cursor);
-//        this.closeDB();
-//
-//        return task;
-//    }
-//
-//    private static Task getTaskFromCursor(Cursor cursor) {
-//        if (cursor == null || cursor.getCount() == 0){
-//            return null;
-//        }
-//        else {
-//            try {
-//                Task task = new Task(
-//                        cursor.getInt(TASK_ID_COL),
-//                        cursor.getInt(TASK_LIST_ID_COL),
-//                        cursor.getString(TASK_NAME_COL),
-//                        cursor.getString(TASK_NOTES_COL),
-//                        cursor.getInt(TASK_COMPLETED_COL),
-//                        cursor.getInt(TASK_HIDDEN_COL));
-//                return task;
-//            }
-//            catch(Exception e) {
-//                return null;
-//            }
-//        }
-//    }
-//
-//    public long insertTask(Task task) {
-//        ContentValues cv = new ContentValues();
-//        cv.put(TASK_LIST_ID, task.getListId());
-//        cv.put(TASK_NAME, task.getName());
-//        cv.put(TASK_NOTES, task.getNotes());
-//        cv.put(TASK_COMPLETED, task.getCompletedDate());
-//        cv.put(TASK_HIDDEN, task.getHidden());
-//
-//        this.openWriteableDB();
-//        long rowID = db.insert(TASK_TABLE, null, cv);
-//        this.closeDB();
-//
-//        return rowID;
-//    }
-//
-//    public int updateTask(Task task) {
-//        ContentValues cv = new ContentValues();
-//        cv.put(TASK_LIST_ID, task.getListId());
-//        cv.put(TASK_NAME, task.getName());
-//        cv.put(TASK_NOTES, task.getNotes());
-//        cv.put(TASK_COMPLETED, task.getCompletedDate());
-//        cv.put(TASK_HIDDEN, task.getHidden());
-//
-//        String where = TASK_ID + "= ?";
-//        String[] whereArgs = { String.valueOf(task.getId()) };
-//
-//        this.openWriteableDB();
-//        int rowCount = db.update(TASK_TABLE, cv, where, whereArgs);
-//        this.closeDB();
-//
-//        return rowCount;
-//    }
-//
-//    public int deleteTask(long id) {
-//        String where = TASK_ID + "= ?";
-//        String[] whereArgs = { String.valueOf(id) };
-//
-//        this.openWriteableDB();
-//        int rowCount = db.delete(TASK_TABLE, where, whereArgs);
-//        this.closeDB();
-//
-//        return rowCount;
-//    }
 }

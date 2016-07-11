@@ -20,77 +20,34 @@ import java.util.Date;
 
 public class SelectionActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private SimpleDateFormat shortDateOutFormat = new SimpleDateFormat("yyyy/MM/dd");
-    private final String FILE1NAME = "astoria_annual.xml";
-    private final String FILE2NAME = "florence_annual.xml";
-    private final String FILE3NAME = "goldbeach_annual.xml";
-    private final String FILE4NAME = "southbeach_annual.xml";
-
-    private String[] files = {
-            FILE1NAME,
-            FILE2NAME,
-            FILE3NAME,
-            FILE4NAME
-    };
-
-    private String[] locations = {
-            FILE1NAME.substring(0, 3),
-            FILE2NAME.substring(0, 3),
-            FILE3NAME.substring(0, 3),
-            FILE4NAME.substring(0, 3)
-    };
+    private SimpleDateFormat niceDateOutFormat = new SimpleDateFormat("EEEE, MMMM dd, yyyy");
+    private SimpleDateFormat day1OutFormat = new SimpleDateFormat("MMMM dd -");
+    private SimpleDateFormat day2OutFormat = new SimpleDateFormat(" dd, yyyy");
+    private SimpleDateFormat shortDateFormat = new SimpleDateFormat("yyyy/MM/dd");
 
     private Spinner locationSpinner;
     private Button tideInfoButton;
     private DatePicker readingDatePicker;
-    private FileIO fileIO;
-    private ArrayList<DataItem> dataCollection;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_selection);
 
-        Intent intent = getIntent();
-
-        fileIO = new FileIO(getApplicationContext());
-
         locationSpinner = (Spinner) findViewById(R.id.locationSpinner);
 
         ArrayAdapter<CharSequence> adapter =
-                ArrayAdapter.createFromResource(this, R.array.locations_array, android.R.layout.simple_spinner_item);
+                ArrayAdapter.createFromResource(this, R.array.locations_array, R.layout.spinner_item);
 
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
 
         locationSpinner.setAdapter(adapter);
-
-        locationSpinner.setSelection(0);
 
         tideInfoButton = (Button) findViewById(R.id.tideInfoButton);
         tideInfoButton.setOnClickListener(this);
 
         readingDatePicker = (DatePicker) findViewById(R.id.readingDatePicker);
-
-        Boolean returningFlag = Boolean.parseBoolean(intent.getStringExtra("returning"));
-
-        if(returningFlag == true) {
-            dataCollection = fileIO.readAllFiles(files);
-            // get db and StringBuilder objects
-            TideTrackerDB db = new TideTrackerDB(this);
-            db.fillData(db, locations, dataCollection);
-        }
-//        new ReadFeed().execute();
-
     }
-
-//    class ReadFeed extends AsyncTask<Void, Void, Void> {
-//        @Override
-//        protected Void doInBackground(Void... params) {
-//
-//
-//            return null;
-//        }
-//    }
 
     @Override
     public void onClick(View view) {
@@ -121,12 +78,24 @@ public class SelectionActivity extends AppCompatActivity implements View.OnClick
 
                     Date selectedDate =  calendar.getTime();
 
-                    String formattedDate = shortDateOutFormat.format(selectedDate);
+                    String formattedDate = shortDateFormat.format(selectedDate);
+                    String niceFormattedDate = niceDateOutFormat.format(selectedDate);
+
+                    String formattedDate2 = formattedDate;
+                    if(month != 12 && day != 31)
+                    {
+                        calendar.add(Calendar.DATE, 1);
+                        Date dayAfter = calendar.getTime();
+                        formattedDate2 = shortDateFormat.format(dayAfter);
+                        niceFormattedDate = day1OutFormat.format(selectedDate) + day2OutFormat.format(dayAfter);
+                    }
 
                     Intent intent = new Intent(this, ViewTidesActivity.class);
 
                     intent.putExtra("location", location);
                     intent.putExtra("date", formattedDate);
+                    intent.putExtra("date2", formattedDate2);
+                    intent.putExtra("niceDate", niceFormattedDate);
 
                     this.startActivity(intent);
 

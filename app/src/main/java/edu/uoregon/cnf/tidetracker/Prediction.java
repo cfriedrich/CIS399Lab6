@@ -1,10 +1,7 @@
 package edu.uoregon.cnf.tidetracker;
 
-import java.util.Date;
 
-/**
- * Created by Christopher on 7/9/2016.
- */
+// The Prediction object
 public class Prediction {
 
     private int predictionID;

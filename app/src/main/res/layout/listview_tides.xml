@@ -27,6 +27,16 @@
             android:layout_height="wrap_content"
             android:textSize="18sp"
             android:layout_weight="1"
+            android:text="date"
+            android:id="@+id/dateTextView" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:background="@android:color/darker_gray"
+            android:textColor="@android:color/white"
+            android:layout_weight=".7"
             android:text="time"
             android:id="@+id/timeTextView" />
 
@@ -34,7 +44,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="18sp"
-            android:layout_weight="1"
+            android:layout_weight=".7"
             android:text="highlow"
             android:id="@+id/highLowTextView" />
 
@@ -42,7 +52,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="18sp"
-            android:layout_weight="1"
+            android:layout_weight=".5"
+            android:background="@android:color/darker_gray"
+            android:textColor="@android:color/white"
             android:text="feet"
             android:id="@+id/feetTextView" />
 
@@ -50,17 +62,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="18sp"
-            android:layout_weight="1"
+            android:layout_weight=".5"
             android:text="cm"
             android:id="@+id/centimetersTextView" />
 
     </LinearLayout>
 
-    <Button
-        android:layout_width="107dp"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/mainLinearLayout"
-        android:text="Return"
-        android:id="@+id/returnButton"
-        android:layout_gravity="center_horizontal" />
 </LinearLayout>

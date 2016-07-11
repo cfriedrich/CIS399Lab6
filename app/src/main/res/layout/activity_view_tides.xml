@@ -13,14 +13,20 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:id="@+id/dateTextView"
+        android:id="@+id/headingTextView"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:id="@+id/fullDateTextView"
+        android:layout_below="@+id/headingTextView" />
     <LinearLayout
         android:orientation="horizontal"
         android:id="@+id/headerLayout"
-        android:layout_below="@+id/dateTextView"
+        android:layout_below="@+id/fullDateTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
@@ -31,8 +37,19 @@
             android:layout_height="wrap_content"
             android:background="@color/colorAccent"
             android:textColor="@color/apptheme_color"
-            android:textSize="22sp"
+            android:textSize="18sp"
             android:layout_weight="1"
+            android:textStyle="bold"
+            android:text="Date"
+            android:id="@+id/dateTextView" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/colorAccent"
+            android:textColor="@color/apptheme_color"
+            android:textSize="18sp"
+            android:layout_weight=".4"
             android:textStyle="bold"
             android:text="Time"
             android:id="@+id/timeTextView" />
@@ -42,10 +59,10 @@
             android:layout_height="wrap_content"
             android:background="@color/colorAccent"
             android:textColor="@color/apptheme_color"
-            android:textSize="22sp"
-            android:layout_weight="1"
+            android:textSize="18sp"
+            android:layout_weight=".3"
             android:textStyle="bold"
-            android:text="High/Low"
+            android:text="H/L"
             android:id="@+id/highLowTextView" />
 
         <TextView
@@ -53,10 +70,10 @@
             android:layout_height="wrap_content"
             android:background="@color/colorAccent"
             android:textColor="@color/apptheme_color"
-            android:textSize="22sp"
-            android:layout_weight="1"
+            android:textSize="18sp"
+            android:layout_weight=".2"
             android:textStyle="bold"
-            android:text="Feet"
+            android:text="ft"
             android:id="@+id/feetTextView" />
 
         <TextView
@@ -64,10 +81,10 @@
             android:layout_height="wrap_content"
             android:background="@color/colorAccent"
             android:textColor="@color/apptheme_color"
-            android:textSize="22sp"
-            android:layout_weight="1"
+            android:textSize="18sp"
+            android:layout_weight=".1"
             android:textStyle="bold"
-            android:text="CM"
+            android:text="cm"
             android:id="@+id/centimetersTextView" />
 
     </LinearLayout>
@@ -76,6 +93,16 @@
         android:layout_height="wrap_content"
         android:id="@+id/tidesListView"
         android:layout_below="@+id/headerLayout"
+        android:layout_above="@+id/returnButton"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />
+
+    <Button
+        android:layout_width="107dp"
+        android:layout_height="wrap_content"
+        android:text="Return"
+        android:id="@+id/returnButton"
+        android:layout_gravity="center_horizontal"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true" />
 </RelativeLayout>

@@ -1,8 +1,6 @@
 package edu.uoregon.cnf.tidetracker;
 
-/**
- * Created by Christopher on 7/9/2016.
- */
+// The Location object which represents.. a location
 public class Location {
 
     private int locationID;

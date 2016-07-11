@@ -6,7 +6,6 @@ import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.List;
 
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -19,6 +18,7 @@ public class FileIO {
 
     public FileIO (Context context) { this.context = context;}
 
+    // For reading all of the files
     public ArrayList<DataItem> readAllFiles(String[] files)
     {
         for(String fileName : files) {

@@ -1,26 +1,18 @@
 package edu.uoregon.cnf.tidetracker;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
-import android.text.Selection;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
-
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 public class ViewTidesActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -28,28 +20,23 @@ public class ViewTidesActivity extends AppCompatActivity implements View.OnClick
     private TideTrackerDB db;
     private ListView tidesListView;
     private String date;
+    private String date2;
+    private String fullDate;
     private String location;
     private int locationID;
-    private TextView dateTextView;
+    private TextView headingTextView;
+    private TextView fullDateTextView;
     private Button returnButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_tides);
-//        // my_child_toolbar is defined in the layout file
-//        Toolbar myChildToolbar =
-//                (Toolbar) findViewById(R.id.my_toolbar);
-//        setSupportActionBar(myChildToolbar);
-//
-//        // Get a support ActionBar corresponding to this toolbar
-//        ActionBar ab = getSupportActionBar();
-//
-//        // Enable the Up button
-//        ab.setDisplayHomeAsUpEnabled(true);
         Intent intent = getIntent();
 
         date = intent.getStringExtra("date");
+        date2 = intent.getStringExtra("date2");
+        fullDate = intent.getStringExtra("niceDate");
         location = intent.getStringExtra("location");
         String locationShort = location.toLowerCase().substring(0, 3);
 
@@ -61,24 +48,23 @@ public class ViewTidesActivity extends AppCompatActivity implements View.OnClick
         locationID = db.getLocationID(locationShort);
 
         tidesListView = (ListView) findViewById(R.id.tidesListView);
-        dateTextView = (TextView) findViewById(R.id.dateTextView);
+        headingTextView = (TextView) findViewById(R.id.headingTextView);
+        fullDateTextView = (TextView) findViewById(R.id.fullDateTextView);
 
-        datePredictions = db.getPredictions(String.valueOf(locationID), date);
+        datePredictions = db.getPredictions(String.valueOf(locationID), date, date2);
 
-        dateTextView.setText("Readings for " + location + ", Oregon on " + date);
-
+        headingTextView.setText("Readings for " + location + ", Oregon");
+        fullDateTextView.setText(fullDate);
         displayTideData();
     }
 
     private void displayTideData()
     {
-//        ArrayList<String[]> data =
-//                new ArrayList<String[]>();
-
         ArrayList<HashMap<String, String>> data = new ArrayList<HashMap<String, String>>();
 
         for (Prediction prediction : datePredictions) {
             HashMap<String, String> map = new HashMap<String, String>();
+                map.put("date", prediction.getDate());
                 map.put("time", prediction.getTime());
                 map.put("highlow", prediction.getHighlow());
                 map.put("feet", prediction.getFeet());
@@ -88,32 +74,27 @@ public class ViewTidesActivity extends AppCompatActivity implements View.OnClick
 
         // Create the resource, from, and to variables
         int resource = R.layout.listview_tides;
-        String[] from = {"time", "highlow", "feet", "cm"};
-        int[] to = {R.id.timeTextView, R.id.highLowTextView, R.id.feetTextView, R.id.centimetersTextView};
+        String[] from = {"date", "time", "highlow", "feet", "cm"};
+        int[] to = {R.id.dateTextView, R.id.timeTextView, R.id.highLowTextView, R.id.feetTextView, R.id.centimetersTextView};
 
         // Create and set the adapter
-
         SimpleAdapter adapter = new SimpleAdapter(this, data, resource, from, to);
         tidesListView.setAdapter(adapter);
     }
 
+    // Allow the Up button to take the user back to Select screen
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            // Respond to the action bar's Up/Home button
+            // Respond Up button
             case android.R.id.home:
                 Intent upIntent = NavUtils.getParentActivityIntent(this);
                 if (NavUtils.shouldUpRecreateTask(this, upIntent)) {
-                    // This activity is NOT part of this app's task, so create a new task
-                    // when navigating up, with a synthesized back stack.
+
                     TaskStackBuilder.create(this)
-                            // Add all of this activity's parents to the back stack
                             .addNextIntentWithParentStack(upIntent)
-                            // Navigate up to the closest parent
                             .startActivities();
                 } else {
-                    // This activity is part of this app's task, so simply
-                    // navigate up to the logical parent activity.
                     NavUtils.navigateUpTo(this, upIntent);
                 }
                 return true;
@@ -127,6 +108,7 @@ public class ViewTidesActivity extends AppCompatActivity implements View.OnClick
         if(view.getId() == R.id.returnButton)
         {
             Intent intent = new Intent(this, SelectionActivity.class);
+            intent.putExtra("locationID", String.valueOf(locationID));
             intent.putExtra("returning", "true");
             this.startActivity(intent);
         }
